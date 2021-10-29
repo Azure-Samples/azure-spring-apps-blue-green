@@ -1,0 +1,91 @@
+name: blue-green-deploy-job
+
+on:
+  workflow_call:
+    inputs:
+      AZURE_RESOURCEGROUP_NAME:
+        required: true
+        type: string
+      SPRING_CLOUD_SERVICE:
+        required: true
+        type: string
+      APP_NAME:
+        required: true
+        type: string
+      DEFAULT_DEPLOYMENT:
+        required: false
+        default: default
+        type: string
+      NEW_DEPLOYMENT:
+        required: false
+        default: green
+        type: string
+      ARTIFACT:
+        required: true
+        type: string
+      JARPATH:
+        required: true
+        type: string
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      NEWDEPLOYMENT: ${{ steps.deploy.outputs.NEWDEPLOYMENT }}
+      ACTIVEDEPLOYMENT: ${{ steps.deploy.outputs.ACTIVEDEPLOYMENT }}
+
+    steps:
+    - name: Download jar
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{inputs.ARTIFACT}}
+
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      id: deploy
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az extension add --name spring-cloud
+          az config set defaults.group=${{inputs.AZURE_RESOURCEGROUP_NAME}}
+          az config set defaults.spring-cloud=${{inputs.SPRING_CLOUD_SERVICE}}
+          ACTIVEDEPLOYMENT=$(az spring-cloud app show -n ${{inputs.APP_NAME}} --query properties.activeDeployment.name -o tsv)
+          if [ "$ACTIVEDEPLOYMENT" = "${{inputs.DEFAULT_DEPLOYMENT}}" ]; then
+            NEWDEPLOYMENT="${{inputs.NEW_DEPLOYMENT}}"
+          else
+            NEWDEPLOYMENT="${{inputs.DEFAULT_DEPLOYMENT}}"
+          fi
+          echo 'new deployment: ' $NEWDEPLOYMENT
+          echo 'active deployment': $ACTIVEDEPLOYMENT
+          NEWDEPLOYMENTEXISTS=$(az spring-cloud app deployment list --app ${{inputs.APP_NAME}} --query "[?name=='$NEWDEPLOYMENT'].name" -o tsv)
+          if [ "$NEWDEPLOYMENTEXISTS" = "$NEWDEPLOYMENT" ]; then
+            echo $NEWDEPLOYMENT ' already exists'
+          else
+            echo 'creating deployment ' $NEWDEPLOYMENT
+            az spring-cloud app deployment create --app ${{inputs.APP_NAME}} -n $NEWDEPLOYMENT
+          fi
+          az spring-cloud app deploy -n ${{inputs.APP_NAME}} --jar-path $GITHUB_WORKSPACE/${{inputs.JARPATH}} -d $NEWDEPLOYMENT
+
+  switch-to-production:
+    runs-on: ubuntu-latest
+    needs: deploy
+    environment: Production
+    steps:
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az spring-cloud app set-deployment -d ${{ needs.deploy.outputs.NEWDEPLOYMENT }} -n ${{inputs.APP_NAME}}
+          az spring-cloud app deployment delete --app ${{inputs.APP_NAME}} -n ${{ needs.deploy.outputs.ACTIVEDEPLOYMENT }}

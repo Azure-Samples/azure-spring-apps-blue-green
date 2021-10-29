@@ -1,0 +1,23 @@
+name: infra-deploy
+
+on: [workflow_dispatch]
+
+env:
+    AZURE_RESOURCEGROUP_NAME: spring-cloud-demos
+    SPRING_CLOUD_SERVICE: spring-cloud-service
+    APP_NAME: gateway
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: azure/arm-deploy@v1
+      with:
+        deploymentName: ${{ github.run_number }}
+        resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
+        template: ./deploy/main.bicep
+        parameters: spring_cloud_name=${{env.SPRING_CLOUD_SERVICE}} appName=${{env.APP_NAME}} 
