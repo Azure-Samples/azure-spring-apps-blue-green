@@ -83,28 +83,90 @@ az ad sp create-for-rbac \
 
 1. This will start a new workflow run and deploy the necessary infrastructure. 
 
-### Quickstart
+## Workflows in this sample
 
-1. git clone [repository clone url]
-2. cd [respository name]
-3. ...
+This sample repository includes 3 sample workflows for deploying applications to Azure Spring Cloud.
 
-## Demo
+### Simple Workflow
 
-A demo app is included to show how to use the project.
+The [simple workflow](.github/workflows/simple-deploy.yml) is a workflow you can use for direct deployment to an application in Azure Spring Cloud. It does not include any blue green strategy, but deploys straight to an app. You can use this workflow in case no blue-green zero downtime deployment of your application is needed.
 
-To run the demo, follow these steps:
+Steps to trigger this workflow: 
 
-(Add steps to start up the demo)
+1. Make sure you have created a _AZURE_CREDENTIALS_ secret in your GitHub repository for your service principal connection as described in the infrastructure deploy above. 
+ 
+1. Inspect the [simple-deploy.yml](.github/workflows/simple-deploy.yml) file and update any environment variables at the top of the file to reflect your environment. 
 
-1.
-2.
-3.
+1. In your GitHub repo, navigate to *Actions* and select the *simple-deploy* action. 
+
+1. Select *Run workflow* > *Run workflow*. 
+
+1. This will start a new workflow run and deploy your application. 
+
+### Blue Green Workflow
+
+The [blue green workflow](.github/workflows/blue-green-deploy.yml) utilizes a blue green pattern to deploy an application to Azure Spring Cloud with zero downtime. 
+
+This workflow will deploy your application to a new deployment in Azure Spring Cloud. It then makes use of a second job linked to an environment. On the environment you can configure a _required reviewers_ environment protection rule. This will halt the workflow run execution until you have reviewed the new version of the application has deployed correctly, has fully warmed up and can accept production load. Once this is the case, you can approve the workflow to continue its run. This will swap the 2 deployments, making your newly deployed version the production one receiving traffic. It will also delete the previous production deployment. 
+
+Steps to trigger this workflow: 
+
+1. Make sure you have created a _AZURE_CREDENTIALS_ secret in your GitHub repository for your service principal connection as described in the infrastructure deploy above. 
+
+1. Create a new environment _Production_. In your GitHub repository navigate to **Settings** > **Environments** and select the **New environment** button. Fill out **Production** as the name for your environment and select the **Configure environment** button. 
+
+> [!Note]
+> In case you want to use a different name for your environment you can do so, the environment is available as a parameter at the top of the workflow file and can be updated to your preference.
+
+1. In the next screen, select the **Required reviewers** checkbox, fill out your own GitHub alias in the textbox as a required reviewer and select the **Save protection rules** button. 
+
+1. Inspect the [blue-green-deploy.yml](.github/workflows/blue-green-deploy.yml) file and update any environment variables at the top of the file to reflect your environment. 
+
+1. In your GitHub repo, navigate to *Actions* and select the *blue-green-deploy* action. 
+
+1. Select *Run workflow* > *Run workflow*. 
+
+1. This will start a new workflow run and deploy your application to a new deployment. The workflow uses 2 deployments it can alternate between: default and green. You can change these names in the environment variables at the top of the workflow. 
+
+1. Once your application has been deployed, you will get an option to either Reject or approve the rest of the workflow run. First navigate to your application in Azure Spring Cloud and inspect whether the new deployment holds the new version of your application and is running correctly. If all looks ok you can approve the further run of your workflow. If not, you can reject, alter your code and redeploy. 
+
+### Blue Green Job and Workflow
+
+The [blue green job](.github/workflows/blue-green-deploy-job.yml) file is a reusable workflow. It is being used by the [blue green deploy using job](.github/workflows/blue-green-deploy-using-job.yml) workflow. Suppose you have multiple applications you would like to deploy to the same Azure Spring Cloud service, for these you can reuse the [blue green job](.github/workflows/blue-green-deploy-job.yml) for each of them.
+
+The reusable workflow will deploy your application to a new deployment in Azure Spring Cloud. It then makes use of a second job linked to an environment. On the environment you can configure a _required reviewers_ environment protection rule. This will halt the workflow run execution until you have reviewed the new version of the application has deployed correctly, has fully warmed up and can accept production load. Once this is the case, you can approve the workflow to continue its run. This will swap the 2 deployments, making your newly deployed version the production one receiving traffic. It will also delete the previous production deployment. 
+
+The reusable workflow is used in the [blue green deploy using job](.github/workflows/blue-green-deploy-using-job.yml) workflow. This wokflow will build the code and will next call the reusable workflow. You will notice inspecting the code that parameters from the top of the file have moved to values directly at the place where the reusable workflow is called. GitHub reusable workflows currently do not support the usage of environment variables when calling a reusable workflow. 
+
+Steps to trigger this workflow: 
+
+1. Make sure you have created a _AZURE_CREDENTIALS_ secret in your GitHub repository for your service principal connection as described in the infrastructure deploy above. 
+
+2. Create a new environment _Production_. In your GitHub repository navigate to **Settings** > **Environments** and select the **New environment** button. Fill out **Production** as the name for your environment and select the **Configure environment** button. 
+
+> [!Note]
+> In case you want to use a different name for your environment you can do so, the environment is available as a parameter at the top of the workflow file and can be updated to your preference.
+
+1. In the next screen, select the **Required reviewers** checkbox, fill out your own GitHub alias in the textbox as a required reviewer and select the **Save protection rules** button. 
+
+1. Inspect the [blue-green-deploy-using-job.yml](.github/workflows/blue-green-blue-green-deploy-using-job.yml) file and update any parameters calling the reusable workflow (lines 38 to 42). 
+
+1. In your GitHub repo, navigate to *Actions* and select the *blue-green-deploy-using-job* action. 
+
+1. Select *Run workflow* > *Run workflow*. 
+
+1. This will start a new workflow run and deploy your application to a new deployment. The workflow uses 2 deployments it can alternate between: default and green. You can change these names in the parameters send to the reusable workflow. 
+
+1. Once your application has been deployed, you will get an option to either Reject or approve the rest of the workflow run. First navigate to your application in Azure Spring Cloud and inspect whether the new deployment holds the new version of your application and is running correctly. If all looks ok you can approve the further run of your workflow. If not, you can reject, alter your code and redeploy. 
+
+This workflow can additionally be extended upon to deploy multiple applications at once. 
 
 ## Resources
 
-(Any additional resources or related projects)
-
-- Link to supporting information
-- Link to similar sample
-- ...
+- [Azure Spring Cloud service](https://docs.microsoft.com/azure/spring-cloud/overview)
+- [Azure Spring Cloud Deployments](https://docs.microsoft.com/azure/spring-cloud/how-to-staging-environment)
+- [Azure Spring Cloud CI/CD](https://docs.microsoft.com/azure/spring-cloud/how-to-github-actions?pivots=programming-language-java)
+- [Blue-green deployment strategies](https://docs.microsoft.com/azure/spring-cloud/concepts-blue-green-deployment-strategies)
+- [GitHub Actions Environments](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment)
+- [Provision Azure Spring Cloud using Bicep](https://docs.microsoft.com/azure/spring-cloud/quickstart-deploy-infrastructure-vnet-bicep)
+- [az spring-cloud app deployment](https://docs.microsoft.com/cli/azure/spring-cloud/app/deployment?view=azure-cli-latest)
