@@ -9,6 +9,7 @@ env:
     DEFAULT_DEPLOYMENT: default
     NEW_DEPLOYMENT: green
     PACKAGE_PATH: piggymetrics
+    ENVIRONMENT: Production
 
 jobs:
   build:
@@ -29,7 +30,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: jar-files
-        path: ./piggymetrics/**/target/**.jar
+        path: ./${{ env.PACKAGE_PATH }}/**/target/**.jar
 
   deploy:
     runs-on: ubuntu-latest
@@ -72,12 +73,12 @@ jobs:
             echo 'creating deployment ' $NEWDEPLOYMENT
             az spring-cloud app deployment create --app ${{env.APP_NAME}} -n $NEWDEPLOYMENT
           fi
-          az spring-cloud app deploy -n ${{env.APP_NAME}} --jar-path $GITHUB_WORKSPACE/piggymetrics/${{env.APP_NAME}}/target/${{env.APP_NAME}}.jar -d $NEWDEPLOYMENT
+          az spring-cloud app deploy -n ${{env.APP_NAME}} --jar-path $GITHUB_WORKSPACE/${{ env.PACKAGE_PATH }}/${{env.APP_NAME}}/target/${{env.APP_NAME}}.jar -d $NEWDEPLOYMENT
 
   switch-to-production:
     runs-on: ubuntu-latest
     needs: deploy
-    environment: Production
+    environment: ${{ env.ENVIRONMENT }}
     steps:
     - uses: azure/login@v1
       with:

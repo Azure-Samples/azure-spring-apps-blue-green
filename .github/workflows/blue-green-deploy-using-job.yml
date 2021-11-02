@@ -4,6 +4,7 @@ on: [workflow_dispatch]
 
 env:
     APP_NAME: gateway
+    PACKAGE_PATH: piggymetrics
 
 jobs:
   build:
@@ -23,13 +24,13 @@ jobs:
         cache: maven
 
     - name: Build with Maven
-      run: mvn -B package --file piggymetrics/pom.xml -DskipTests
+      run: mvn -B package --file ${{ env.PACKAGE_PATH }}/pom.xml -DskipTests
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: jar-files
-        path: ./piggymetrics/**/target/**.jar
+        path: ./${{ env.PACKAGE_PATH }}/**/target/**.jar
 
   deploy-app:
     uses: Azure-Samples/blue-green-deploy-using-job/.github/workflows/blue-green-deploy-job.yml@main
@@ -40,6 +41,7 @@ jobs:
       APP_NAME: gateway
       ARTIFACT: jar-files
       JARPATH: gateway.jar
+      ENVIRONMENT: Production
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 

@@ -26,6 +26,10 @@ on:
       JARPATH:
         required: true
         type: string
+      ENVIRONMENT:
+        required: false
+        default: Production
+        type: string    
     secrets:
       AZURE_CREDENTIALS:
         required: true
@@ -76,7 +80,7 @@ jobs:
   switch-to-production:
     runs-on: ubuntu-latest
     needs: deploy
-    environment: Production
+    environment: ${{inputs.ENVIRONMENT}}
     steps:
     - uses: azure/login@v1
       with:
