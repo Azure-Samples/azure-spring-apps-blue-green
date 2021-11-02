@@ -33,7 +33,7 @@ jobs:
         path: ./${{ env.PACKAGE_PATH }}/**/target/**.jar
 
   deploy-app:
-    uses: Azure-Samples/blue-green-deploy-using-job/.github/workflows/blue-green-deploy-job.yml@main
+    uses: Azure-Samples/azure-spring-cloud-blue-green/.github/workflows/blue-green-deploy-job.yml@main
     needs: build
     with: 
       AZURE_RESOURCEGROUP_NAME: spring-cloud-demos
