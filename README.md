@@ -86,6 +86,7 @@ az ad sp create-for-rbac \
 ## Workflows in this sample
 
 This sample repository includes 3 sample workflows for deploying applications to Azure Spring Cloud.
+Each workflow deploys the piggymetrics gateway application to Azure Spring Cloud service. Piggymetrics has been added to this repository as a submodule. You can change this application for your own through the parameters in each of the workflows. 
 
 ### Simple Workflow
 

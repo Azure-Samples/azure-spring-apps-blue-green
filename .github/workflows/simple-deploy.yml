@@ -6,6 +6,7 @@ env:
     AZURE_RESOURCEGROUP_NAME: spring-cloud-demos
     SPRING_CLOUD_SERVICE: spring-cloud-service
     APP_NAME: gateway
+    PACKAGE_PATH: piggymetrics
 
 jobs:
   build-and-deploy:
@@ -25,7 +26,7 @@ jobs:
         cache: maven
 
     - name: Build with Maven
-      run: mvn -B package --file piggymetrics/pom.xml -DskipTests
+      run: mvn -B package --file ${{env.PACKAGE_PATH}}/pom.xml -DskipTests
 
     - uses: azure/login@v1
       with:
@@ -39,4 +40,4 @@ jobs:
           az extension add --name spring-cloud
           az config set defaults.group=${{env.AZURE_RESOURCEGROUP_NAME}}
           az config set defaults.spring-cloud=${{env.SPRING_CLOUD_SERVICE}}
-          az spring-cloud app deploy -n ${{env.APP_NAME}} --jar-path $GITHUB_WORKSPACE/piggymetrics/${{env.APP_NAME}}/target/${{env.APP_NAME}}.jar 
+          az spring-cloud app deploy -n ${{env.APP_NAME}} --jar-path $GITHUB_WORKSPACE/${{env.PACKAGE_PATH}}/${{env.APP_NAME}}/target/${{env.APP_NAME}}.jar 
