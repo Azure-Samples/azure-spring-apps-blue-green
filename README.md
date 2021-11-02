@@ -1,7 +1,7 @@
 # Automated blue green deployment for Azure Spring Cloud applications
 
 This sample shows how to enable automated blue green deployment for Azure Spring Cloud apps.
-The repository contains a sample application and workflows to deploy this application in an automated blue green pattern. The provided sample can be updated for deploying your own Spring Boot application. You can reuse the workflows in the [.github/workflows](.github/workflows) folder.
+The repository contains a sample application and workflows to deploy this application in an automated blue green pattern. The provided sample currently uses the Piggymetrics gateway application, but can be updated for deploying your own Spring Boot application. You can reuse the workflows in the [.github/workflows](.github/workflows) folder.
 The sample source code is based on the Azure Architecture Center sample for [Azure Spring Cloud blue green deployment](link still needed).
 
 ## Features
@@ -24,7 +24,7 @@ This repository provides the following features:
 
 ### Setup the infrastructure
 
-Only execute the below in case you don't have an Azure resource group and Azure Spring Cloud service deployed yet. The below walkthrough also contains the steps needed to set up your deployment secret in your GitHub repository. 
+Only execute the below in case you don't have an Azure resource group and Azure Spring Cloud service deployed yet. The below walk-through also contains the steps needed to set up your deployment secret in your GitHub repository. 
 You will need the latest version of the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) installed to execute these steps.
 
 1. Define environment variables.
@@ -83,10 +83,12 @@ az ad sp create-for-rbac \
 
 1. This will start a new workflow run and deploy the necessary infrastructure. 
 
+1. Double check in the Azure Portal that all resources got deployed correctly and are up and running. 
+
 ## Workflows in this sample
 
 This sample repository includes 3 sample workflows for deploying applications to Azure Spring Cloud.
-Each workflow deploys the piggymetrics gateway application to Azure Spring Cloud service. Piggymetrics has been added to this repository as a submodule. You can change this application for your own through the parameters in each of the workflows. 
+Each workflow deploys the piggymetrics gateway application to Azure Spring Cloud service. Piggymetrics has been added to this repository as a submodule. You can change the application being deployed for your own through the parameters in each of the workflows. 
 
 ### Simple Workflow
 
@@ -137,7 +139,7 @@ The [blue green job](.github/workflows/blue-green-deploy-job.yml) file is a reus
 
 The reusable workflow will deploy your application to a new deployment in Azure Spring Cloud. It then makes use of a second job linked to an environment. On the environment you can configure a _required reviewers_ environment protection rule. This will halt the workflow run execution until you have reviewed the new version of the application has deployed correctly, has fully warmed up and can accept production load. Once this is the case, you can approve the workflow to continue its run. This will swap the 2 deployments, making your newly deployed version the production one receiving traffic. It will also delete the previous production deployment. 
 
-The reusable workflow is used in the [blue green deploy using job](.github/workflows/blue-green-deploy-using-job.yml) workflow. This wokflow will build the code and will next call the reusable workflow. You will notice inspecting the code that parameters from the top of the file have moved to values directly at the place where the reusable workflow is called. GitHub reusable workflows currently do not support the usage of environment variables when calling a reusable workflow. 
+The reusable workflow is used in the [blue green deploy using job](.github/workflows/blue-green-deploy-using-job.yml) workflow. This wokflow will build the code and will next call the reusable workflow. You will notice that parameters from the top of the file have moved to values directly at where the reusable workflow is called. GitHub reusable workflows currently do not support the usage of environment variables when calling a reusable workflow. 
 
 Steps to trigger this workflow: 
 
@@ -150,13 +152,13 @@ Steps to trigger this workflow:
 
 1. In the next screen, select the **Required reviewers** checkbox, fill out your own GitHub alias in the textbox as a required reviewer and select the **Save protection rules** button. 
 
-1. Inspect the [blue-green-deploy-using-job.yml](.github/workflows/blue-green-blue-green-deploy-using-job.yml) file and update any parameters calling the reusable workflow (lines 38 to 42). 
+1. Inspect the [blue-green-deploy-using-job.yml](.github/workflows/blue-green-blue-green-deploy-using-job.yml) file and update any parameters calling the reusable workflow (lines 39 to 44). 
 
 1. In your GitHub repo, navigate to *Actions* and select the *blue-green-deploy-using-job* action. 
 
 1. Select *Run workflow* > *Run workflow*. 
 
-1. This will start a new workflow run and deploy your application to a new deployment. The workflow uses 2 deployments it can alternate between: default and green. You can change these names in the parameters send to the reusable workflow. 
+1. This will start a new workflow run and deploy your application to a new deployment. The workflow uses 2 deployments it can alternate between: default and green. You can change these names in the inputs send to the reusable workflow. 
 
 1. Once your application has been deployed, you will get an option to either Reject or approve the rest of the workflow run. First navigate to your application in Azure Spring Cloud and inspect whether the new deployment holds the new version of your application and is running correctly. If all looks ok you can approve the further run of your workflow. If not, you can reject, alter your code and redeploy. 
 
