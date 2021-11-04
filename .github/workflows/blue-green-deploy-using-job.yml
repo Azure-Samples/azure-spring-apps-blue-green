@@ -36,7 +36,7 @@ jobs:
     uses: Azure-Samples/azure-spring-cloud-blue-green/.github/workflows/blue-green-deploy-job.yml@main
     needs: build
     with: 
-      AZURE_RESOURCEGROUP_NAME: spring-cloud-demos
+      AZURE_RESOURCEGROUP_NAME: spring-cloud-rg
       SPRING_CLOUD_SERVICE: spring-cloud-service
       APP_NAME: gateway
       ARTIFACT: jar-files

@@ -3,7 +3,7 @@ name: infra-deploy
 on: [workflow_dispatch]
 
 env:
-    AZURE_RESOURCEGROUP_NAME: spring-cloud-demos
+    AZURE_RESOURCEGROUP_NAME: spring-cloud-rg
     SPRING_CLOUD_SERVICE: spring-cloud-service
     APP_NAME: gateway
 
