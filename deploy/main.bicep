@@ -28,7 +28,6 @@ resource the_app 'Microsoft.AppPlatform/Spring/apps@2021-06-01-preview' = {
   location: location
   properties: {
     public: true
-    activeDeploymentName: 'default'
   }
 }
 
