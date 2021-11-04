@@ -41,3 +41,13 @@ resource app_deployment 'Microsoft.AppPlatform/Spring/apps/deployments@2021-06-0
     }
   }
 }
+
+module activeDeployment './activedeployment.bicep' = {
+  name: 'setActiveDeployment'
+  params: {
+    app: the_app.name
+  }
+  dependsOn: [
+    app_deployment
+  ]
+}
