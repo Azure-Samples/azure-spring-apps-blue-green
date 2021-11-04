@@ -39,4 +39,5 @@ jobs:
           az extension add --name spring-cloud
           az config set defaults.group=${{env.AZURE_RESOURCEGROUP_NAME}}
           az config set defaults.spring-cloud=${{env.SPRING_CLOUD_SERVICE}}
+          az account show
           az spring-cloud app deploy -n ${{env.APP_NAME}} --artifact-path $GITHUB_WORKSPACE/${{env.PACKAGE_PATH}}/${{env.APP_NAME}}/target/${{env.APP_NAME}}.jar 
