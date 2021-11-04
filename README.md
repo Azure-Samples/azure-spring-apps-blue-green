@@ -30,7 +30,7 @@ You will need the latest version of the [Azure CLI](https://docs.microsoft.com/e
 1. Define environment variables.
 
 ```bash
-RESOURCE_GROUP='spring-cloud-demos'
+RESOURCE_GROUP='spring-cloud-rg'
 LOCATION=westus
 ```
 
@@ -51,7 +51,7 @@ az group create --name $RESOURCE_GROUP --location $LOCATION
 1. Copy the resource group ID which is outputted in the previous step to a new environment variable.
 
 ```azurecli
-RESOURCE_GROUP_ID=<resource group IP from previous output>
+RESOURCE_GROUP_ID=<resource group ID from previous output>
 ```
 
 1. Create a service principal and give it access to the resource group.
@@ -60,7 +60,7 @@ RESOURCE_GROUP_ID=<resource group IP from previous output>
 az ad sp create-for-rbac \
   --name SpringCloudGHBicepActionWorkflow \
   --role Contributor \
-  --scopes $RESOURCE_GROUP_ID \
+  --scopes '$RESOURCE_GROUP_ID' \
   --sdk-auth
 ```
 
