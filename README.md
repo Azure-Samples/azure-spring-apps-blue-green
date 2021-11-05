@@ -60,7 +60,7 @@ RESOURCE_GROUP_ID=<resource group ID from previous output>
 az ad sp create-for-rbac \
   --name SpringCloudGHBicepActionWorkflow \
   --role Contributor \
-  --scopes '$RESOURCE_GROUP_ID' \
+  --scopes $RESOURCE_GROUP_ID \
   --sdk-auth
 ```
 
@@ -117,9 +117,6 @@ Steps to trigger this workflow:
 1. Make sure you have created a _AZURE_CREDENTIALS_ secret in your GitHub repository for your service principal connection as described in the infrastructure deploy above. 
 
 1. Create a new environment _Production_. In your GitHub repository navigate to **Settings** > **Environments** and select the **New environment** button. Fill out **Production** as the name for your environment and select the **Configure environment** button. 
-
-> [!Note]
-> In case you want to use a different name for your environment you can do so, the environment is available as a parameter at the top of the workflow file and can be updated to your preference.
 
 1. In the next screen, select the **Required reviewers** checkbox, fill out your own GitHub alias in the textbox as a required reviewer and select the **Save protection rules** button. 
 
