@@ -76,7 +76,7 @@ jobs:
             az spring-cloud app deployment create --app ${{env.APP_NAME}} -n $NEWDEPLOYMENT
           fi
           echo 'workspace:' ${{ github.workspace }} 
-          az spring-cloud app deploy -n ${{env.APP_NAME}} --artifact-path ${{ github.workspace }}/${{env.APP_NAME}}/target/${{env.APP_NAME}}.jar -d $NEWDEPLOYMENT
+          az spring-cloud app deploy -n ${{env.APP_NAME}} --artifact-path ./${{env.APP_NAME}}/target/${{env.APP_NAME}}.jar -d $NEWDEPLOYMENT
 
   switch-to-production:
     runs-on: ubuntu-latest
