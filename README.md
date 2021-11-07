@@ -87,7 +87,7 @@ az ad sp create-for-rbac \
 
 ## Workflows in this sample
 
-This sample repository includes 3 sample workflows for deploying applications to Azure Spring Cloud.
+This sample repository includes 2 sample workflows for deploying applications to Azure Spring Cloud.
 Each workflow deploys the piggymetrics gateway application to Azure Spring Cloud service. Piggymetrics has been added to this repository as a submodule. You can change the application being deployed for your own through the parameters in each of the workflows. 
 
 ### Simple Workflow
@@ -130,6 +130,8 @@ Steps to trigger this workflow:
 
 1. Once the deploy job has deployed your application, you will get a notification to review your deployment. First navigate to your application in Azure Spring Cloud and inspect whether the new deployment holds the new version of your application and is running correctly. If all looks ok you can approve the further run of your workflow. If not, you can reject, alter your code and redeploy. 
 
+<!-- 
+Commented out for now, because of a limitation in reusable workflows: https://docs.github.com/en/actions/learn-github-actions/reusing-workflows#limitations
 ### Blue Green Job and Workflow
 
 The [blue green job](.github/workflows/blue-green-deploy-job.yml) file is a reusable workflow. It is being used by the [blue green deploy using job](.github/workflows/blue-green-deploy-using-job.yml) workflow. Suppose you have multiple applications you would like to deploy to the same Azure Spring Cloud service, for these you can reuse the [blue green job](.github/workflows/blue-green-deploy-job.yml) for each of them.
@@ -159,7 +161,7 @@ Steps to trigger this workflow:
 
 1. Once your application has been deployed, you will get an option to either Reject or approve the rest of the workflow run. First navigate to your application in Azure Spring Cloud and inspect whether the new deployment holds the new version of your application and is running correctly. If all looks ok you can approve the further run of your workflow. If not, you can reject, alter your code and redeploy. 
 
-This workflow can additionally be extended upon to deploy multiple applications at once. 
+This workflow can additionally be extended upon to deploy multiple applications at once.  -->
 
 ## Resources
 

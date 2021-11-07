@@ -1,5 +1,9 @@
 name: blue-green-deploy-using-job
 
+# Not functioning correctly currently, because of the last limitation in this list: https://docs.github.com/en/actions/learn-github-actions/reusing-workflows#limitations 
+# This workflow works in case you omit the multiple jobs and usage of an environment in the Azure-Samples/azure-spring-cloud-blue-green/.github/workflows/blue-green-deploy-job.yml@main file. 
+# The ${{ needs.deploy.outputs.NEWDEPLOYMENT }} is not recognized. 
+
 on: [workflow_dispatch]
 
 env:
