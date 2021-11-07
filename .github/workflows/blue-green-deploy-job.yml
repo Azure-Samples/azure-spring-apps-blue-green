@@ -92,5 +92,7 @@ jobs:
         azcliversion: 2.29.2 # remove again after this is fixed: https://github.com/Azure/cli/issues/56
         inlineScript: |
           az extension add --name spring-cloud
+          az config set defaults.group=${{env.AZURE_RESOURCEGROUP_NAME}}
+          az config set defaults.spring-cloud=${{env.SPRING_CLOUD_SERVICE}}
           az spring-cloud app set-deployment -d ${{ needs.deploy.outputs.NEWDEPLOYMENT }} -n ${{inputs.APP_NAME}}
           az spring-cloud app deployment delete --app ${{inputs.APP_NAME}} -n ${{ needs.deploy.outputs.ACTIVEDEPLOYMENT }}
