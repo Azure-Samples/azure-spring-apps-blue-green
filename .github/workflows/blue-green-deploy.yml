@@ -44,7 +44,7 @@ jobs:
         name: jar-files
     - name: Display structure of downloaded files
       run: ls -R
-      working-directory: $GITHUB_WORKSPACE
+      working-directory: ${{ github.workspace }}
 
     - uses: azure/login@v1
       with:
