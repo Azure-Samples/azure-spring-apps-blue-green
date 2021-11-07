@@ -90,7 +90,8 @@ jobs:
     - name: Azure CLI script
       uses: azure/CLI@v1
       with:
-        azcliversion: latest
+        azcliversion: 2.29.2 # remove again after this is fixed: https://github.com/Azure/cli/issues/56
         inlineScript: |
+          az extension add --name spring-cloud
           az spring-cloud app set-deployment -d ${{ needs.deploy.outputs.NEWDEPLOYMENT }} -n ${{env.APP_NAME}}
           az spring-cloud app deployment delete --app ${{env.APP_NAME}} -n ${{ needs.deploy.outputs.ACTIVEDEPLOYMENT }}

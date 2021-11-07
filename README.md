@@ -128,7 +128,7 @@ Steps to trigger this workflow:
 
 1. This will start a new workflow run and deploy your application to a new deployment. The workflow uses 2 deployments it can alternate between: default and green. You can change these names in the environment variables at the top of the workflow. 
 
-1. Once your application has been deployed, you will get an option to either Reject or approve the rest of the workflow run. First navigate to your application in Azure Spring Cloud and inspect whether the new deployment holds the new version of your application and is running correctly. If all looks ok you can approve the further run of your workflow. If not, you can reject, alter your code and redeploy. 
+1. Once the deploy job has deployed your application, you will get a notification to review your deployment. First navigate to your application in Azure Spring Cloud and inspect whether the new deployment holds the new version of your application and is running correctly. If all looks ok you can approve the further run of your workflow. If not, you can reject, alter your code and redeploy. 
 
 ### Blue Green Job and Workflow
 
