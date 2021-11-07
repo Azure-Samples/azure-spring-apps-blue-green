@@ -42,13 +42,10 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: jar-files
-    - name: Display structure of downloaded files
-      run: ls -R
-
     - uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
+        creds: ${{ secrets.AZURE_CREDENTIALS }}    
+
     - name: Azure CLI script
       uses: azure/CLI@v1
       id: deploy

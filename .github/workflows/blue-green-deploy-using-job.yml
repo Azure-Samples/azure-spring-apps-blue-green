@@ -40,8 +40,7 @@ jobs:
       SPRING_CLOUD_SERVICE: spring-cloud-service
       APP_NAME: gateway
       ARTIFACT: jar-files
-      JARPATH: gateway.jar
+      JARPATH: ./gateway/target/gateway.jar
       ENVIRONMENT: Production
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-
